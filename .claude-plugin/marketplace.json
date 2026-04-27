@@ -9,5 +9,8 @@
 			"name": "superpowers",
 			"source": "./plugins/superpowers"
 		}
+	],
+	"allowCrossMarketplaceDependenciesOn": [
+		"claude-plugins-official"
 	]
 }

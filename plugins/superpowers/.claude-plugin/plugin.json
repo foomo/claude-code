@@ -4,6 +4,9 @@
 	"version": "0.1.0",
 	"description": "Superpowers the foomo way",
 	"dependencies": [
-		"superpowers@claude-plugins-official"
+		{
+			"name": "superpowers",
+			"marketplace": "claude-plugins-official"
+		}
 	]
 }
