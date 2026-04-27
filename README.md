@@ -15,7 +15,7 @@
 
 Contributions are welcome! Please read the [contributing guide](CONTRIBUTING.md).
 
-![Contributors](https://contributors-table.vercel.app/image?repo=foomo/gotsrpc&width=50&columns=15)
+![Contributors](https://contributors-table.vercel.app/image?repo=foomo/claude-code&width=50&columns=15)
 
 ## License
 
