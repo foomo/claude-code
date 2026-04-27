@@ -1,0 +1,13 @@
+{
+	"$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+	"name": "foomo",
+	"owner": {
+		"name": "foomo"
+	},
+	"plugins": [
+		{
+			"name": "superpowers",
+			"source": "./plugins/superpowers"
+		}
+	]
+}
