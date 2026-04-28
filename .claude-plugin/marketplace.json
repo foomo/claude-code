@@ -8,6 +8,10 @@
 		{
 			"name": "superpowers",
 			"source": "./plugins/superpowers"
+		},
+		{
+			"name": "obacht",
+			"source": "./plugins/obacht"
 		}
 	],
 	"allowCrossMarketplaceDependenciesOn": [
