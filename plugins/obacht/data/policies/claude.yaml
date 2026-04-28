@@ -39,7 +39,7 @@ rules:
       }
   - id: CLD003
     title: Claude Code prStatusFooterEnabled is not disabled
-    severity: warn
+    severity: info
     category: claude
     description: |
       The PR status footer makes outbound calls to GitHub to display PR
@@ -121,7 +121,7 @@ rules:
       }
   - id: CLD007
     title: Claude Code DISABLE_TELEMETRY is not set in settings.json
-    severity: warn
+    severity: high
     category: claude
     description: |
       DISABLE_TELEMETRY="1" opts out of anonymized usage telemetry that
@@ -180,7 +180,7 @@ rules:
       }
   - id: CLD010
     title: Claude Code DISABLE_LOGIN_COMMAND is not set in settings.json
-    severity: warn
+    severity: info
     category: claude
     description: |
       DISABLE_LOGIN_COMMAND="1" hides the /login command. In
@@ -199,7 +199,7 @@ rules:
       }
   - id: CLD011
     title: Claude Code DISABLE_LOGOUT_COMMAND is not set in settings.json
-    severity: warn
+    severity: info
     category: claude
     description: |
       DISABLE_LOGOUT_COMMAND="1" hides the /logout command. Pairs
@@ -218,7 +218,7 @@ rules:
       }
   - id: CLD012
     title: Claude Code DISABLE_ERROR_REPORTING is not set in settings.json
-    severity: warn
+    severity: high
     category: claude
     description: |
       DISABLE_ERROR_REPORTING="1" stops Claude Code from uploading
@@ -335,7 +335,7 @@ rules:
       }
   - id: CLD018
     title: Claude Code CLAUDE_CODE_DISABLE_CRON is not set in settings.json
-    severity: warn
+    severity: info
     category: claude
     description: |
       CLAUDE_CODE_DISABLE_CRON="1" turns off scheduled/cron-style
@@ -374,7 +374,7 @@ rules:
       }
   - id: CLD020
     title: Claude Code CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING is not set in settings.json
-    severity: warn
+    severity: info
     category: claude
     description: |
       CLAUDE_CODE_DISABLE_FILE_CHECKPOINTING="1" disables the
@@ -394,7 +394,7 @@ rules:
       }
   - id: CLD021
     title: Claude Code CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS is not set in settings.json
-    severity: warn
+    severity: info
     category: claude
     description: |
       CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS="1" opts out of
@@ -473,7 +473,7 @@ rules:
       }
   - id: CLD025
     title: Claude Code disableDeepLinkRegistration is not set to "disable" in settings.json
-    severity: warn
+    severity: high
     category: claude
     description: |
       disableDeepLinkRegistration="disable" stops Claude Code from
@@ -493,7 +493,7 @@ rules:
       }
   - id: CLD026
     title: Claude Code attribution.commit and attribution.pr are not empty in settings.json
-    severity: warn
+    severity: info
     category: claude
     description: |
       Claude Code appends an attribution trailer to commit messages
@@ -564,7 +564,7 @@ rules:
       }
   - id: CLD029
     title: Claude Code autoMemoryDirectory is not set to ".claude/memory" in settings.json
-    severity: warn
+    severity: info
     category: claude
     description: |
       autoMemoryDirectory pins Claude Code's automatic memory store
@@ -585,7 +585,7 @@ rules:
       }
   - id: CLD030
     title: Claude Code plansDirectory is not set to ".claude/plans" in settings.json
-    severity: warn
+    severity: info
     category: claude
     description: |
       plansDirectory pins where Claude Code writes implementation
@@ -605,7 +605,7 @@ rules:
       }
   - id: CLD031
     title: Claude Code sandbox.enabled is not true in settings.json
-    severity: warn
+    severity: high
     category: claude
     description: |
       sandbox.enabled=true turns on the platform sandbox that
@@ -625,7 +625,7 @@ rules:
       }
   - id: CLD032
     title: Claude Code sandbox.autoAllowBashIfSandboxed is not false in settings.json
-    severity: warn
+    severity: high
     category: claude
     description: |
       sandbox.autoAllowBashIfSandboxed=false keeps Bash calls in the
@@ -645,7 +645,7 @@ rules:
       }
   - id: CLD033
     title: Claude Code sandbox.allowUnsandboxedCommands is not false in settings.json
-    severity: warn
+    severity: high
     category: claude
     description: |
       sandbox.allowUnsandboxedCommands=false prevents tool calls
@@ -684,86 +684,6 @@ rules:
         }
       }
   - id: CLD035
-    title: Claude Code sandbox.network.allowedDomains does not include "github.com"
-    severity: warn
-    category: claude
-    description: |
-      "github.com" should be in sandbox.network.allowedDomains so
-      tools that legitimately need GitHub access (clone, gh, API
-      calls) can succeed under the network allowlist. Other entries
-      are fine; this rule only checks for the presence of github.com.
-    remediation: 'Add "github.com" to sandbox.network.allowedDomains in ~/.claude/settings.json (or $CLAUDE_CONFIG_DIR/settings.json)'
-    policy: |
-      findings contains f if {
-        input.installed
-        input.settings_present
-        input.sandbox_network_allowed_domains_has_github != "true"
-        f := {
-          "rule_id": "CLD035",
-          "evidence": "sandbox.network.allowedDomains is missing \"github.com\"",
-        }
-      }
-  - id: CLD036
-    title: Claude Code sandbox.network.deniedDomains does not include "uploads.github.com"
-    severity: warn
-    category: claude
-    description: |
-      "uploads.github.com" should be in sandbox.network.deniedDomains
-      so the allowlist for github.com does not implicitly grant
-      upload access. Blocking the upload subdomain prevents writing
-      data out via large-file or attachment endpoints.
-    remediation: 'Add "uploads.github.com" to sandbox.network.deniedDomains in ~/.claude/settings.json (or $CLAUDE_CONFIG_DIR/settings.json)'
-    policy: |
-      findings contains f if {
-        input.installed
-        input.settings_present
-        input.sandbox_network_denied_domains_has_uploads_github != "true"
-        f := {
-          "rule_id": "CLD036",
-          "evidence": "sandbox.network.deniedDomains is missing \"uploads.github.com\"",
-        }
-      }
-  - id: CLD037
-    title: Claude Code sandbox.filesystem.allowWrite does not include "~/.cache/npm/logs"
-    severity: warn
-    category: claude
-    description: |
-      "~/.cache/npm/logs" should be in sandbox.filesystem.allowWrite
-      so npm operations under the sandbox can record their logs in
-      the standard location. Without it, npm-driven tool calls fail
-      to write logs and may error spuriously.
-    remediation: 'Add "~/.cache/npm/logs" to sandbox.filesystem.allowWrite in ~/.claude/settings.json (or $CLAUDE_CONFIG_DIR/settings.json)'
-    policy: |
-      findings contains f if {
-        input.installed
-        input.settings_present
-        input.sandbox_filesystem_allow_write_has_npm_logs != "true"
-        f := {
-          "rule_id": "CLD037",
-          "evidence": "sandbox.filesystem.allowWrite is missing \"~/.cache/npm/logs\"",
-        }
-      }
-  - id: CLD038
-    title: Claude Code sandbox.filesystem.allowWrite does not include "~/.config/claude/debug"
-    severity: warn
-    category: claude
-    description: |
-      "~/.config/claude/debug" should be in sandbox.filesystem.allowWrite
-      so Claude Code can write its own debug artefacts under the
-      sandbox. Without it, debug logs cannot be persisted, making
-      diagnostics harder.
-    remediation: 'Add "~/.config/claude/debug" to sandbox.filesystem.allowWrite in ~/.claude/settings.json (or $CLAUDE_CONFIG_DIR/settings.json)'
-    policy: |
-      findings contains f if {
-        input.installed
-        input.settings_present
-        input.sandbox_filesystem_allow_write_has_claude_debug != "true"
-        f := {
-          "rule_id": "CLD038",
-          "evidence": "sandbox.filesystem.allowWrite is missing \"~/.config/claude/debug\"",
-        }
-      }
-  - id: CLD039
     title: Claude Code permissions.disableBypassPermissionsMode is not "disable" in settings.json
     severity: high
     category: claude
@@ -780,11 +700,11 @@ rules:
         input.settings_present
         input.permissions_disable_bypass_mode != "disable"
         f := {
-          "rule_id": "CLD039",
+          "rule_id": "CLD035",
           "evidence": sprintf("permissions.disableBypassPermissionsMode is %s, expected \"disable\"", [input.permissions_disable_bypass_mode]),
         }
       }
-  - id: CLD040
+  - id: CLD036
     title: Claude Code permissions.deny missing network/exfiltration tool blocks
     severity: high
     category: claude
@@ -809,11 +729,11 @@ rules:
         input.settings_present
         input.permissions_deny_network_missing != ""
         f := {
-          "rule_id": "CLD040",
+          "rule_id": "CLD036",
           "evidence": sprintf("permissions.deny missing network/exfiltration entries:\n        • %s", [concat("\n        • ", split(input.permissions_deny_network_missing, " "))]),
         }
       }
-  - id: CLD041
+  - id: CLD037
     title: Claude Code permissions.deny missing destructive filesystem command blocks
     severity: high
     category: claude
@@ -839,11 +759,11 @@ rules:
         input.settings_present
         input.permissions_deny_destructive_fs_missing != ""
         f := {
-          "rule_id": "CLD041",
+          "rule_id": "CLD037",
           "evidence": sprintf("permissions.deny missing destructive filesystem entries:\n        • %s", [concat("\n        • ", split(input.permissions_deny_destructive_fs_missing, " "))]),
         }
       }
-  - id: CLD042
+  - id: CLD038
     title: Claude Code permissions.deny missing destructive git command blocks
     severity: warn
     category: claude
@@ -865,11 +785,11 @@ rules:
         input.settings_present
         input.permissions_deny_git_missing != ""
         f := {
-          "rule_id": "CLD042",
+          "rule_id": "CLD038",
           "evidence": sprintf("permissions.deny missing destructive git entries:\n        • %s", [concat("\n        • ", split(input.permissions_deny_git_missing, " "))]),
         }
       }
-  - id: CLD043
+  - id: CLD039
     title: Claude Code permissions.deny missing home credential directory blocks
     severity: high
     category: claude
@@ -895,11 +815,11 @@ rules:
         input.settings_present
         input.permissions_deny_home_secrets_missing != ""
         f := {
-          "rule_id": "CLD043",
+          "rule_id": "CLD039",
           "evidence": sprintf("permissions.deny missing home credential entries:\n        • %s", [concat("\n        • ", split(input.permissions_deny_home_secrets_missing, " "))]),
         }
       }
-  - id: CLD044
+  - id: CLD040
     title: Claude Code permissions.deny missing project secret file blocks
     severity: high
     category: claude
@@ -930,11 +850,11 @@ rules:
         input.settings_present
         input.permissions_deny_project_secrets_missing != ""
         f := {
-          "rule_id": "CLD044",
+          "rule_id": "CLD040",
           "evidence": sprintf("permissions.deny missing project secret entries:\n        • %s", [concat("\n        • ", split(input.permissions_deny_project_secrets_missing, " "))]),
         }
       }
-  - id: CLD045
+  - id: CLD041
     title: Claude Desktop installed Native Messaging manifests for Chromium browsers
     severity: high
     category: claude
@@ -960,7 +880,7 @@ rules:
       findings contains f if {
         count(input.claude_desktop_native_messaging_manifests) > 0
         f := {
-          "rule_id": "CLD045",
+          "rule_id": "CLD041",
           "evidence": sprintf("Unmitigated Claude Desktop Native Messaging manifest(s):\n        • %s", [concat("\n        • ", input.claude_desktop_native_messaging_manifests)]),
         }
       }

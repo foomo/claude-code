@@ -14,13 +14,7 @@
 		"autoAllowBashIfSandboxed": false,
 		"allowUnsandboxedCommands": false,
 		"network": {
-			"allowManagedDomainsOnly": true,
-			"allowedDomains": [
-				"github.com"
-			],
-			"deniedDomains": [
-				"uploads.github.com"
-			]
+			"allowManagedDomainsOnly": true
 		}
 	},
 	"permissions": {
@@ -33,11 +27,24 @@
 			"Bash(npm test:*)"
 		],
 		"deny": [
+			"Read(./.env)",
+			"Read(./.env.*)",
+			"Read(./*.pem)",
+			"Read(./*.key)",
 			"Read(./**/.env)",
 			"Read(./**/.env.*)",
-			"Read(./secrets/**)",
 			"Read(./**/*.pem)",
 			"Read(./**/*.key)",
+			"Read(./**/id_rsa*)",
+			"Read(./**/id_ed25519*)",
+			"Read(./**/credentials*)",
+			"Read(./secrets/**)",
+			"Read(~/.ssh/**)",
+			"Read(~/.aws/**)",
+			"Read(~/.gnupg/**)",
+			"Read(~/.config/gh/**)",
+			"Read(~/.kube/**)",
+			"Read(~/.docker/config.json)",
 			"Bash(git push:*)",
 			"Bash(git tag:*)",
 			"Bash(git reset --hard:*)",
@@ -50,7 +57,9 @@
 			"Bash(chmod 777:*)",
 			"Bash(chown:*)",
 			"Bash(rm -rf /:*)",
-			"Bash(rm -rf ~:*)"
+			"Bash(rm -rf ~:*)",
+			"Bash(dd:*)",
+			"Bash(mkfs:*)"
 		],
 		"additionalDirectories": []
 	},

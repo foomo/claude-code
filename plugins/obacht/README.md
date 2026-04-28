@@ -267,16 +267,11 @@ rest of the `.claude` directory.
 **Severity:** warn — Pins where Claude Code writes implementation plans to `.claude/plans` for unified review and
 management.
 
-## CLD031-CLD038: Claude Code sandbox configuration in settings.json
+## CLD031-CLD034: Claude Code sandbox configuration in settings.json
 
 The following rules check the `sandbox` block in `~/.claude/settings.json` (or `$CLAUDE_CONFIG_DIR/settings.json`).
 Together they enforce: the sandbox is on, it is not auto-bypassed for Bash, unsandboxed commands are not allowed,
-network access is restricted to a managed allowlist that includes `github.com` while explicitly denying
-`uploads.github.com`, and the filesystem allowlist contains the npm-log and Claude debug paths needed for normal
-tool operation.
-
-Array checks use must-contain semantics — adding extra domains or write paths does not fail the rule, only the
-absence of the listed value does.
+and network access is restricted to a managed allowlist.
 
 A complete remediation block looks like:
 
@@ -287,15 +282,7 @@ A complete remediation block looks like:
     "autoAllowBashIfSandboxed": false,
     "allowUnsandboxedCommands": false,
     "network": {
-      "allowManagedDomainsOnly": true,
-      "allowedDomains": ["github.com"],
-      "deniedDomains": ["uploads.github.com"]
-    },
-    "filesystem": {
-      "allowWrite": [
-        "~/.cache/npm/logs",
-        "~/.config/claude/debug"
-      ]
+      "allowManagedDomainsOnly": true
     }
   }
 }
@@ -318,25 +305,7 @@ per-command oversight.
 
 **Severity:** warn — Outbound traffic must be limited to the allowlist, otherwise the allowlist is decorative.
 
-### CLD035: sandbox.network.allowedDomains contains "github.com"
-
-**Severity:** warn — `github.com` is required for clone, `gh`, and API calls under the network allowlist.
-
-### CLD036: sandbox.network.deniedDomains contains "uploads.github.com"
-
-**Severity:** warn — Blocking the upload subdomain prevents using GitHub's allowlisted access to write data outbound.
-
-### CLD037: sandbox.filesystem.allowWrite contains "~/.cache/npm/logs"
-
-**Severity:** warn — npm operations need to write log files; without this entry npm-driven tools fail under the
-sandbox.
-
-### CLD038: sandbox.filesystem.allowWrite contains "~/.config/claude/debug"
-
-**Severity:** warn — Claude Code's debug artefacts need a writable location; without this entry diagnostics cannot be
-persisted.
-
-## CLD039-CLD044: Claude Code permissions deny-list hardening in settings.json
+## CLD035-CLD040: Claude Code permissions deny-list hardening in settings.json
 
 The following rules check the `permissions` block in `~/.claude/settings.json` (or
 `$CLAUDE_CONFIG_DIR/settings.json`). Together they harden Claude Code by forcing every privileged tool call through
@@ -395,42 +364,42 @@ A complete remediation block looks like:
 }
 ```
 
-### CLD039: permissions.disableBypassPermissionsMode
+### CLD035: permissions.disableBypassPermissionsMode
 
 **Severity:** high — Bypass mode turns off the permission-prompt flow and lets tool calls run without user
 confirmation. Setting it to `"disable"` forces every privileged action through normal allow/deny review.
 
-### CLD040: permissions.deny network/exfiltration tool blocks
+### CLD036: permissions.deny network/exfiltration tool blocks
 
 **Severity:** high — Required entries: `Bash(nc:*)`, `Bash(netcat:*)`, `Bash(socat:*)`, `Bash(ssh:*)`,
 `Bash(scp:*)`, `Bash(rsync:*)`. These move data off-host or open inbound connections from a sandbox-escaped tool call.
 Claude Code's sanctioned network channels (WebFetch, `gh`) cover the legitimate use cases.
 
-### CLD041: permissions.deny destructive filesystem command blocks
+### CLD037: permissions.deny destructive filesystem command blocks
 
 **Severity:** high — Required entries: `Bash(chmod 777:*)`, `Bash(chown:*)`, `Bash(rm -rf /:*)`, `Bash(rm -rf ~:*)`,
 `Bash(dd:*)`, `Bash(mkfs:*)`. Blocks mass deletion, ownership changes, raw block writes, and filesystem creation —
 all irreversible operations that should never come from an autonomous tool call.
 
-### CLD042: permissions.deny destructive git command blocks
+### CLD038: permissions.deny destructive git command blocks
 
 **Severity:** warn — Required entries: `Bash(git push:*)`, `Bash(git tag:*)`, `Bash(git reset --hard:*)`. Forces the
 user to publish history or discard work out-of-band rather than from inside a tool call.
 
-### CLD043: permissions.deny home credential directory blocks
+### CLD039: permissions.deny home credential directory blocks
 
 **Severity:** high — Required entries: `Read(~/.ssh/**)`, `Read(~/.aws/**)`, `Read(~/.gnupg/**)`,
 `Read(~/.config/gh/**)`, `Read(~/.kube/**)`, `Read(~/.docker/config.json)`. Keeps long-lived credentials (SSH keys,
 IAM access keys, PGP keys, GitHub CLI tokens, cluster credentials, registry tokens) out of transcripts.
 
-### CLD044: permissions.deny project secret file blocks
+### CLD040: permissions.deny project secret file blocks
 
 **Severity:** high — Required entries: `Read(./.env)`, `Read(./.env.*)`, `Read(./*.pem)`, `Read(./*.key)`,
 `Read(./**/.env)`, `Read(./**/.env.*)`, `Read(./**/*.pem)`, `Read(./**/*.key)`, `Read(./**/id_rsa*)`,
 `Read(./**/id_ed25519*)`, `Read(./**/credentials*)`. Both top-level and recursive (`**` glob) variants are
 required so secrets in nested directories cannot be read either.
 
-## CLD045: Claude Desktop installed Native Messaging manifests for Chromium browsers
+## CLD041: Claude Desktop installed Native Messaging manifests for Chromium browsers
 
 **Severity:** high
 

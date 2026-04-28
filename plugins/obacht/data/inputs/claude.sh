@@ -134,10 +134,6 @@ sandbox_enabled=unset
 sandbox_auto_allow_bash_if_sandboxed=unset
 sandbox_allow_unsandboxed_commands=unset
 sandbox_network_allow_managed_domains_only=unset
-sandbox_network_allowed_domains_has_github=false
-sandbox_network_denied_domains_has_uploads_github=false
-sandbox_filesystem_allow_write_has_npm_logs=false
-sandbox_filesystem_allow_write_has_claude_debug=false
 
 permissions_present=false
 permissions_disable_bypass_mode=unset
@@ -255,14 +251,6 @@ if command -v claude >/dev/null 2>&1; then
       network_block=$(printf '%s' "$sandbox_block" | extract_block network)
       if [ -n "$network_block" ]; then
         sandbox_network_allow_managed_domains_only=$(printf '%s' "$network_block" | extract_bool allowManagedDomainsOnly)
-        sandbox_network_allowed_domains_has_github=$(printf '%s' "$network_block" | array_contains allowedDomains 'github.com')
-        sandbox_network_denied_domains_has_uploads_github=$(printf '%s' "$network_block" | array_contains deniedDomains 'uploads.github.com')
-      fi
-
-      filesystem_block=$(printf '%s' "$sandbox_block" | extract_block filesystem)
-      if [ -n "$filesystem_block" ]; then
-        sandbox_filesystem_allow_write_has_npm_logs=$(printf '%s' "$filesystem_block" | array_contains allowWrite '~/.cache/npm/logs')
-        sandbox_filesystem_allow_write_has_claude_debug=$(printf '%s' "$filesystem_block" | array_contains allowWrite '~/.config/claude/debug')
       fi
     fi
 
@@ -298,7 +286,7 @@ plans_esc=$(json_escape "$settings_plans_directory")
 attr_commit_esc=$(json_escape "$settings_attribution_commit")
 attr_pr_esc=$(json_escape "$settings_attribution_pr")
 
-printf '{"installed": %s, "gitignore_excludes_settings": %s, "config_present": %s, "auto_compact_enabled": "%s", "pr_status_footer_enabled": "%s", "claude_in_chrome_default_enabled": "%s", "sandbox_fail_if_unavailable": "%s", "settings_present": %s, "env_disable_compact": "%s", "env_disable_telemetry": "%s", "env_disable_bug_command": "%s", "env_disable_auto_compact": "%s", "env_disable_login_command": "%s", "env_disable_logout_command": "%s", "env_disable_error_reporting": "%s", "env_disable_upgrade_command": "%s", "env_disable_feedback_command": "%s", "env_disable_extra_usage_command": "%s", "env_claude_code_disable_fast_mode": "%s", "env_disable_install_github_app_command": "%s", "env_claude_code_disable_cron": "%s", "env_claude_code_disable_feedback_survey": "%s", "env_claude_code_disable_file_checkpointing": "%s", "env_claude_code_disable_experimental_betas": "%s", "env_force_autoupdate_plugins": "%s", "env_is_demo": "%s", "settings_disable_auto_mode": "%s", "settings_disable_deep_link_registration": "%s", "settings_auto_memory_directory": "%s", "settings_plans_directory": "%s", "settings_respect_gitignore": "%s", "settings_skip_web_fetch_preflight": "%s", "settings_attribution_commit": "%s", "settings_attribution_pr": "%s", "sandbox_enabled": "%s", "sandbox_auto_allow_bash_if_sandboxed": "%s", "sandbox_allow_unsandboxed_commands": "%s", "sandbox_network_allow_managed_domains_only": "%s", "sandbox_network_allowed_domains_has_github": "%s", "sandbox_network_denied_domains_has_uploads_github": "%s", "sandbox_filesystem_allow_write_has_npm_logs": "%s", "sandbox_filesystem_allow_write_has_claude_debug": "%s", "permissions_present": %s, "permissions_disable_bypass_mode": "%s", "permissions_deny_network_missing": "%s", "permissions_deny_destructive_fs_missing": "%s", "permissions_deny_git_missing": "%s", "permissions_deny_home_secrets_missing": "%s", "permissions_deny_project_secrets_missing": "%s", "claude_desktop_native_messaging_manifests": %s}' \
+printf '{"installed": %s, "gitignore_excludes_settings": %s, "config_present": %s, "auto_compact_enabled": "%s", "pr_status_footer_enabled": "%s", "claude_in_chrome_default_enabled": "%s", "sandbox_fail_if_unavailable": "%s", "settings_present": %s, "env_disable_compact": "%s", "env_disable_telemetry": "%s", "env_disable_bug_command": "%s", "env_disable_auto_compact": "%s", "env_disable_login_command": "%s", "env_disable_logout_command": "%s", "env_disable_error_reporting": "%s", "env_disable_upgrade_command": "%s", "env_disable_feedback_command": "%s", "env_disable_extra_usage_command": "%s", "env_claude_code_disable_fast_mode": "%s", "env_disable_install_github_app_command": "%s", "env_claude_code_disable_cron": "%s", "env_claude_code_disable_feedback_survey": "%s", "env_claude_code_disable_file_checkpointing": "%s", "env_claude_code_disable_experimental_betas": "%s", "env_force_autoupdate_plugins": "%s", "env_is_demo": "%s", "settings_disable_auto_mode": "%s", "settings_disable_deep_link_registration": "%s", "settings_auto_memory_directory": "%s", "settings_plans_directory": "%s", "settings_respect_gitignore": "%s", "settings_skip_web_fetch_preflight": "%s", "settings_attribution_commit": "%s", "settings_attribution_pr": "%s", "sandbox_enabled": "%s", "sandbox_auto_allow_bash_if_sandboxed": "%s", "sandbox_allow_unsandboxed_commands": "%s", "sandbox_network_allow_managed_domains_only": "%s", "permissions_present": %s, "permissions_disable_bypass_mode": "%s", "permissions_deny_network_missing": "%s", "permissions_deny_destructive_fs_missing": "%s", "permissions_deny_git_missing": "%s", "permissions_deny_home_secrets_missing": "%s", "permissions_deny_project_secrets_missing": "%s", "claude_desktop_native_messaging_manifests": %s}' \
   "$installed" "$gitignore_excludes_settings" "$config_present" \
   "$auto_compact_enabled" "$pr_status_footer_enabled" \
   "$claude_in_chrome_default_enabled" "$sandbox_fail_if_unavailable" \
@@ -314,8 +302,7 @@ printf '{"installed": %s, "gitignore_excludes_settings": %s, "config_present": %
   "$settings_respect_gitignore" "$settings_skip_web_fetch_preflight" \
   "$attr_commit_esc" "$attr_pr_esc" \
   "$sandbox_enabled" "$sandbox_auto_allow_bash_if_sandboxed" "$sandbox_allow_unsandboxed_commands" \
-  "$sandbox_network_allow_managed_domains_only" "$sandbox_network_allowed_domains_has_github" "$sandbox_network_denied_domains_has_uploads_github" \
-  "$sandbox_filesystem_allow_write_has_npm_logs" "$sandbox_filesystem_allow_write_has_claude_debug" \
+  "$sandbox_network_allow_managed_domains_only" \
   "$permissions_present" "$permissions_disable_bypass_mode" \
   "$permissions_deny_network_missing" "$permissions_deny_destructive_fs_missing" \
   "$permissions_deny_git_missing" "$permissions_deny_home_secrets_missing" \
