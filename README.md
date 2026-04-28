@@ -1,13 +1,21 @@
-# Foomo Claude Code Marketplace
+<p align="center">
+  <img alt="obacht" src="docs/public/logo.png" width="400" height="400"/>
+</p>
+
+# Claude Code
+
+> Claude Code marketplace and plugins
 
 ## Plugins
 
+- obacht
 - superpowers
 
 ## Installation
 
 ```shell
 /plugin marketplace add foomo/claude-code
+/plugin install obacht@foomo
 /plugin install superpowers@foomo
 ```
 

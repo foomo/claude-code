@@ -1,4 +1,54 @@
-# Claude Rules
+# obacht
+
+Audits Claude Code settings (global, project, `~/.claude.json`) for security risks and reports a severity-grouped
+punch list.
+
+## What this plugin provides
+
+- A `/obacht` slash command (see [`commands/obacht.md`](commands/scan.md)) that shells out to the `obacht` CLI and
+  prints its output verbatim.
+- A Rego policy bundle under [`data/policies/claude.yaml`](data/policies/claude.yaml) — the 41 rules documented in the
+  [Rule Reference](#rule-reference) below.
+- An input-gathering script under [`data/inputs/claude.sh`](data/inputs/claude.sh).
+
+Rule evaluation happens inside the external `obacht` binary, not inside Claude. The slash command does not interpret,
+summarise, or edit settings files.
+
+## Prerequisites
+
+The `obacht` CLI must be installed. Pick one:
+
+```shell
+brew install foomo/tap/obacht
+go install github.com/foomo/obacht@latest
+mise x github:foomo/obacht -- obacht scan --rules-dir "$CLAUDE_PLUGIN_ROOT/data"
+```
+
+## Install
+
+```shell
+/plugin marketplace add foomo/claude-code
+/plugin install obacht@foomo
+```
+
+## Usage
+
+Run the audit from inside Claude Code:
+
+```
+/obacht
+```
+
+Pass-through flags supported by the underlying `obacht scan` invocation:
+
+```
+/obacht --severity high
+/obacht --format json
+```
+
+The command prints the CLI output verbatim — no Claude-side reformatting or commentary.
+
+## Rule Reference
 
 Rules covering [Claude Code](https://docs.claude.com/en/docs/claude-code) CLI configuration. These checks read
 `~/.claude.json` (or `$CLAUDE_CONFIG_DIR/.claude.json`) and the global gitignore. The recommended hardening turns off
