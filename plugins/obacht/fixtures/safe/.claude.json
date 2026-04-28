@@ -1,0 +1,26 @@
+{
+	"bypassPermissionsModeAccepted": false,
+	"autoCompactEnabled": false,
+	"prStatusFooterEnabled": false,
+	"claudeInChromeDefaultEnabled": false,
+	"sandbox": {
+		"failIfUnavailable": true
+	},
+	"mcpServers": {
+		"example-pinned": {
+			"command": "npx",
+			"args": [
+				"-y",
+				"@modelcontextprotocol/server-example@1.2.3"
+			]
+		}
+	},
+	"projects": {
+		"/Users/example/project-a": {
+			"allowedTools": [
+				"Read(./**)",
+				"Bash(git status:*)"
+			]
+		}
+	}
+}
