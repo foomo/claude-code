@@ -30,7 +30,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.config_present
         input.auto_compact_enabled != "false"
         f := {
           "rule_id": "CLD002",
@@ -50,7 +49,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.config_present
         input.pr_status_footer_enabled != "false"
         f := {
           "rule_id": "CLD003",
@@ -70,7 +68,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.config_present
         input.claude_in_chrome_default_enabled != "false"
         f := {
           "rule_id": "CLD004",
@@ -92,7 +89,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.config_present
         input.sandbox_fail_if_unavailable != "true"
         f := {
           "rule_id": "CLD005",
@@ -112,7 +108,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.env_disable_compact != "1"
         f := {
           "rule_id": "CLD006",
@@ -131,7 +126,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.env_disable_telemetry != "1"
         f := {
           "rule_id": "CLD007",
@@ -151,7 +145,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.env_disable_bug_command != "1"
         f := {
           "rule_id": "CLD008",
@@ -171,7 +164,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.env_disable_auto_compact != "1"
         f := {
           "rule_id": "CLD009",
@@ -190,7 +182,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.env_disable_login_command != "1"
         f := {
           "rule_id": "CLD010",
@@ -209,7 +200,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.env_disable_logout_command != "1"
         f := {
           "rule_id": "CLD011",
@@ -228,7 +218,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.env_disable_error_reporting != "1"
         f := {
           "rule_id": "CLD012",
@@ -248,7 +237,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.env_disable_upgrade_command != "1"
         f := {
           "rule_id": "CLD013",
@@ -268,7 +256,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.env_disable_feedback_command != "1"
         f := {
           "rule_id": "CLD014",
@@ -287,7 +274,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.env_disable_extra_usage_command != "1"
         f := {
           "rule_id": "CLD015",
@@ -306,7 +292,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.env_claude_code_disable_fast_mode != "1"
         f := {
           "rule_id": "CLD016",
@@ -326,7 +311,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.env_disable_install_github_app_command != "1"
         f := {
           "rule_id": "CLD017",
@@ -346,7 +330,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.env_claude_code_disable_cron != "1"
         f := {
           "rule_id": "CLD018",
@@ -365,7 +348,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.env_claude_code_disable_feedback_survey != "1"
         f := {
           "rule_id": "CLD019",
@@ -385,7 +367,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.env_claude_code_disable_file_checkpointing != "1"
         f := {
           "rule_id": "CLD020",
@@ -405,7 +386,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.env_claude_code_disable_experimental_betas != "1"
         f := {
           "rule_id": "CLD021",
@@ -424,7 +404,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.env_force_autoupdate_plugins != "1"
         f := {
           "rule_id": "CLD022",
@@ -444,7 +423,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.env_is_demo != "1"
         f := {
           "rule_id": "CLD023",
@@ -464,7 +442,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.settings_disable_auto_mode != "disable"
         f := {
           "rule_id": "CLD024",
@@ -484,7 +461,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.settings_disable_deep_link_registration != "disable"
         f := {
           "rule_id": "CLD025",
@@ -505,7 +481,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.settings_attribution_commit != ""
         f := {
           "rule_id": "CLD026",
@@ -514,7 +489,6 @@ rules:
       }
       findings contains f if {
         input.installed
-        input.settings_present
         input.settings_attribution_pr != ""
         f := {
           "rule_id": "CLD026",
@@ -535,7 +509,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.settings_respect_gitignore != "true"
         f := {
           "rule_id": "CLD027",
@@ -555,7 +528,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.settings_skip_web_fetch_preflight != "true"
         f := {
           "rule_id": "CLD028",
@@ -576,7 +548,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.settings_auto_memory_directory != ".claude/memory"
         f := {
           "rule_id": "CLD029",
@@ -596,7 +567,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.settings_plans_directory != ".claude/plans"
         f := {
           "rule_id": "CLD030",
@@ -616,7 +586,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.sandbox_enabled != "true"
         f := {
           "rule_id": "CLD031",
@@ -636,7 +605,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.sandbox_auto_allow_bash_if_sandboxed != "false"
         f := {
           "rule_id": "CLD032",
@@ -656,7 +624,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.sandbox_allow_unsandboxed_commands != "false"
         f := {
           "rule_id": "CLD033",
@@ -676,7 +643,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.sandbox_network_allow_managed_domains_only != "true"
         f := {
           "rule_id": "CLD034",
@@ -697,7 +663,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.permissions_disable_bypass_mode != "disable"
         f := {
           "rule_id": "CLD035",
@@ -726,7 +691,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.permissions_deny_network_missing != ""
         f := {
           "rule_id": "CLD036",
@@ -756,7 +720,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.permissions_deny_destructive_fs_missing != ""
         f := {
           "rule_id": "CLD037",
@@ -782,7 +745,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.permissions_deny_git_missing != ""
         f := {
           "rule_id": "CLD038",
@@ -812,7 +774,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.permissions_deny_home_secrets_missing != ""
         f := {
           "rule_id": "CLD039",
@@ -847,7 +808,6 @@ rules:
     policy: |
       findings contains f if {
         input.installed
-        input.settings_present
         input.permissions_deny_project_secrets_missing != ""
         f := {
           "rule_id": "CLD040",

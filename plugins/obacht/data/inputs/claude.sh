@@ -90,18 +90,29 @@ array_missing() {
   printf '%s' "$missing"
 }
 
+# === required permissions.deny entries (space-joined) ===
+# Defaults for the *_missing fields when the permissions block is
+# absent, so CLD036–CLD040 fire on an empty/missing permissions block
+# rather than passing silently. Format matches array_missing's output
+# (single-space joiner) so the policy's split(... , " ") rendering
+# treats both code paths the same. Keep these in sync with the literal
+# lists passed to array_missing further below.
+required_deny_network='Bash(nc:*) Bash(netcat:*) Bash(socat:*) Bash(ssh:*) Bash(scp:*) Bash(rsync:*)'
+required_deny_destructive_fs='Bash(chmod 777:*) Bash(chown:*) Bash(rm -rf /:*) Bash(rm -rf ~:*) Bash(dd:*) Bash(mkfs:*)'
+required_deny_git='Bash(git push:*) Bash(git tag:*) Bash(git reset --hard:*)'
+required_deny_home_secrets='Read(~/.ssh/**) Read(~/.aws/**) Read(~/.gnupg/**) Read(~/.config/gh/**) Read(~/.kube/**) Read(~/.docker/config.json)'
+required_deny_project_secrets='Read(./.env) Read(./.env.*) Read(./*.pem) Read(./*.key) Read(./**/.env) Read(./**/.env.*) Read(./**/*.pem) Read(./**/*.key) Read(./**/id_rsa*) Read(./**/id_ed25519*) Read(./**/credentials*)'
+
 # === defaults ===
 
 installed=false
 gitignore_excludes_settings=false
 
-config_present=false
 auto_compact_enabled=unset
 pr_status_footer_enabled=unset
 claude_in_chrome_default_enabled=unset
 sandbox_fail_if_unavailable=unset
 
-settings_present=false
 env_disable_compact=unset
 env_disable_telemetry=unset
 env_disable_bug_command=unset
@@ -135,13 +146,15 @@ sandbox_auto_allow_bash_if_sandboxed=unset
 sandbox_allow_unsandboxed_commands=unset
 sandbox_network_allow_managed_domains_only=unset
 
-permissions_present=false
 permissions_disable_bypass_mode=unset
-permissions_deny_network_missing=
-permissions_deny_destructive_fs_missing=
-permissions_deny_git_missing=
-permissions_deny_home_secrets_missing=
-permissions_deny_project_secrets_missing=
+# Default to the full required list so CLD036–CLD040 fire when the
+# permissions block is absent entirely (not just when the deny array
+# is present-but-incomplete). Overwritten below when the block exists.
+permissions_deny_network_missing=$required_deny_network
+permissions_deny_destructive_fs_missing=$required_deny_destructive_fs
+permissions_deny_git_missing=$required_deny_git
+permissions_deny_home_secrets_missing=$required_deny_home_secrets
+permissions_deny_project_secrets_missing=$required_deny_project_secrets
 
 # === Claude Desktop Native Messaging manifests ===
 # Detect com.anthropic.claude_browser_extension.json under ~/Library/Application
@@ -197,7 +210,6 @@ if command -v claude >/dev/null 2>&1; then
   # ~/.claude.json (read once, then probe)
   config_file="${CLAUDE_CONFIG_DIR:-$HOME}/.claude.json"
   if [ -f "$config_file" ]; then
-    config_present=true
     config_content=$(cat "$config_file")
     auto_compact_enabled=$(printf '%s' "$config_content" | extract_bool autoCompactEnabled)
     pr_status_footer_enabled=$(printf '%s' "$config_content" | extract_bool prStatusFooterEnabled)
@@ -210,7 +222,6 @@ if command -v claude >/dev/null 2>&1; then
   # ~/.claude/settings.json (read once, then probe)
   settings_file="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/settings.json"
   if [ -f "$settings_file" ]; then
-    settings_present=true
     settings_content=$(cat "$settings_file")
 
     # env block — driven by a single list so adding a key is one line.
@@ -256,8 +267,11 @@ if command -v claude >/dev/null 2>&1; then
 
     permissions_block=$(printf '%s' "$settings_content" | extract_block permissions)
     if [ -n "$permissions_block" ]; then
-      permissions_present=true
       permissions_disable_bypass_mode=$(printf '%s' "$permissions_block" | extract_string disableBypassPermissionsMode)
+      # NOTE: keep these literal lists in sync with $required_deny_*
+      # above. They cannot be expanded from the variables because some
+      # entries contain spaces (e.g. "chmod 777", "git push") which
+      # would word-split incorrectly under unquoted expansion in POSIX sh.
       permissions_deny_network_missing=$(printf '%s' "$permissions_block" | array_missing deny \
         'Bash(nc:*)' 'Bash(netcat:*)' 'Bash(socat:*)' \
         'Bash(ssh:*)' 'Bash(scp:*)' 'Bash(rsync:*)')
@@ -286,11 +300,10 @@ plans_esc=$(json_escape "$settings_plans_directory")
 attr_commit_esc=$(json_escape "$settings_attribution_commit")
 attr_pr_esc=$(json_escape "$settings_attribution_pr")
 
-printf '{"installed": %s, "gitignore_excludes_settings": %s, "config_present": %s, "auto_compact_enabled": "%s", "pr_status_footer_enabled": "%s", "claude_in_chrome_default_enabled": "%s", "sandbox_fail_if_unavailable": "%s", "settings_present": %s, "env_disable_compact": "%s", "env_disable_telemetry": "%s", "env_disable_bug_command": "%s", "env_disable_auto_compact": "%s", "env_disable_login_command": "%s", "env_disable_logout_command": "%s", "env_disable_error_reporting": "%s", "env_disable_upgrade_command": "%s", "env_disable_feedback_command": "%s", "env_disable_extra_usage_command": "%s", "env_claude_code_disable_fast_mode": "%s", "env_disable_install_github_app_command": "%s", "env_claude_code_disable_cron": "%s", "env_claude_code_disable_feedback_survey": "%s", "env_claude_code_disable_file_checkpointing": "%s", "env_claude_code_disable_experimental_betas": "%s", "env_force_autoupdate_plugins": "%s", "env_is_demo": "%s", "settings_disable_auto_mode": "%s", "settings_disable_deep_link_registration": "%s", "settings_auto_memory_directory": "%s", "settings_plans_directory": "%s", "settings_respect_gitignore": "%s", "settings_skip_web_fetch_preflight": "%s", "settings_attribution_commit": "%s", "settings_attribution_pr": "%s", "sandbox_enabled": "%s", "sandbox_auto_allow_bash_if_sandboxed": "%s", "sandbox_allow_unsandboxed_commands": "%s", "sandbox_network_allow_managed_domains_only": "%s", "permissions_present": %s, "permissions_disable_bypass_mode": "%s", "permissions_deny_network_missing": "%s", "permissions_deny_destructive_fs_missing": "%s", "permissions_deny_git_missing": "%s", "permissions_deny_home_secrets_missing": "%s", "permissions_deny_project_secrets_missing": "%s", "claude_desktop_native_messaging_manifests": %s}' \
-  "$installed" "$gitignore_excludes_settings" "$config_present" \
+printf '{"installed": %s, "gitignore_excludes_settings": %s, "auto_compact_enabled": "%s", "pr_status_footer_enabled": "%s", "claude_in_chrome_default_enabled": "%s", "sandbox_fail_if_unavailable": "%s", "env_disable_compact": "%s", "env_disable_telemetry": "%s", "env_disable_bug_command": "%s", "env_disable_auto_compact": "%s", "env_disable_login_command": "%s", "env_disable_logout_command": "%s", "env_disable_error_reporting": "%s", "env_disable_upgrade_command": "%s", "env_disable_feedback_command": "%s", "env_disable_extra_usage_command": "%s", "env_claude_code_disable_fast_mode": "%s", "env_disable_install_github_app_command": "%s", "env_claude_code_disable_cron": "%s", "env_claude_code_disable_feedback_survey": "%s", "env_claude_code_disable_file_checkpointing": "%s", "env_claude_code_disable_experimental_betas": "%s", "env_force_autoupdate_plugins": "%s", "env_is_demo": "%s", "settings_disable_auto_mode": "%s", "settings_disable_deep_link_registration": "%s", "settings_auto_memory_directory": "%s", "settings_plans_directory": "%s", "settings_respect_gitignore": "%s", "settings_skip_web_fetch_preflight": "%s", "settings_attribution_commit": "%s", "settings_attribution_pr": "%s", "sandbox_enabled": "%s", "sandbox_auto_allow_bash_if_sandboxed": "%s", "sandbox_allow_unsandboxed_commands": "%s", "sandbox_network_allow_managed_domains_only": "%s", "permissions_disable_bypass_mode": "%s", "permissions_deny_network_missing": "%s", "permissions_deny_destructive_fs_missing": "%s", "permissions_deny_git_missing": "%s", "permissions_deny_home_secrets_missing": "%s", "permissions_deny_project_secrets_missing": "%s", "claude_desktop_native_messaging_manifests": %s}' \
+  "$installed" "$gitignore_excludes_settings" \
   "$auto_compact_enabled" "$pr_status_footer_enabled" \
   "$claude_in_chrome_default_enabled" "$sandbox_fail_if_unavailable" \
-  "$settings_present" \
   "$env_disable_compact" "$env_disable_telemetry" "$env_disable_bug_command" \
   "$env_disable_auto_compact" "$env_disable_login_command" "$env_disable_logout_command" \
   "$env_disable_error_reporting" "$env_disable_upgrade_command" "$env_disable_feedback_command" \
@@ -303,7 +316,7 @@ printf '{"installed": %s, "gitignore_excludes_settings": %s, "config_present": %
   "$attr_commit_esc" "$attr_pr_esc" \
   "$sandbox_enabled" "$sandbox_auto_allow_bash_if_sandboxed" "$sandbox_allow_unsandboxed_commands" \
   "$sandbox_network_allow_managed_domains_only" \
-  "$permissions_present" "$permissions_disable_bypass_mode" \
+  "$permissions_disable_bypass_mode" \
   "$permissions_deny_network_missing" "$permissions_deny_destructive_fs_missing" \
   "$permissions_deny_git_missing" "$permissions_deny_home_secrets_missing" \
   "$permissions_deny_project_secrets_missing" \
