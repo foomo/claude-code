@@ -1,0 +1,12 @@
+{
+	"$schema": "https://json.schemastore.org/claude-code-settings.json",
+	"defaultMode": "bypassPermissions",
+	"permissions": {
+		"allow": [
+			"Bash(git:*)",
+			"Read(./**/.env)",
+			"Edit(/**)"
+		],
+		"deny": []
+	}
+}

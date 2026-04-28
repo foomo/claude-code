@@ -1,0 +1,6 @@
+{
+	"$schema": "https://www.schemastore.org/claude-code-plugin-manifest.json",
+	"name": "obacht",
+	"version": "0.1.0",
+	"description": "Audits Claude Code settings (global, project, ~/.claude.json) for security risks and reports a severity-grouped punch list."
+}

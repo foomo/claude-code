@@ -1,0 +1,19 @@
+{
+	"bypassPermissionsModeAccepted": true,
+	"mcpServers": {
+		"unpinned-uvx": {
+			"command": "uvx",
+			"args": [
+				"some-mcp-tool"
+			]
+		}
+	},
+	"projects": {
+		"/Users/example/risky-project": {
+			"allowedTools": [
+				"Bash(*)",
+				"Read(/**)"
+			]
+		}
+	}
+}
