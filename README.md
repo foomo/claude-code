@@ -4,10 +4,11 @@
 
 # Claude Code
 
-> Claude Code marketplace and plugins
+> Claude Code marketplace
 
 ## Plugins
 
+- gha
 - obacht
 - superpowers
 

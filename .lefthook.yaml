@@ -13,13 +13,6 @@ pre-commit:
           echo "Error: Branch name must start with 'feature/' or 'fix/'. Your branch: $branch_name"
           exit 1
         fi
-    golangci-fmt:
-      glob: "*.go"
-      run: golangci-lint fmt {staged_files}
-      stage_fixed: true
-    golangci-lint:
-      glob: "*.go"
-      run: golangci-lint run --new --fast-only
 
 commit-msg:
   skip: [ merge, rebase ]

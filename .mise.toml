@@ -1,3 +1,6 @@
+[settings]
+minimum_release_age = "3d"
+
 [tools]
 # https://mise-tools.jdx.dev/tools/lefthook
-lefthook = "2.1.6"
+lefthook = "2.1.8"
