@@ -8,21 +8,22 @@
 
 ## Plugins
 
-- gha
-- obacht
-- superpowers
+- [`obacht`](plugins/obacht) — runs the `obacht` security scanner and presents results as a severity-grouped report
+- [`skills`](plugins/skills) — common shared skills (GitHub Actions hardening, PR descriptions)
+- [`superpowers`](plugins/superpowers) — foomo defaults layered on top of the upstream `superpowers` plugin
 
 ## Installation
 
 ```shell
 /plugin marketplace add foomo/claude-code
 /plugin install obacht@foomo
+/plugin install skills@foomo
 /plugin install superpowers@foomo
 ```
 
 ## How to Contribute
 
-Contributions are welcome! Please read the [contributing guide](CONTRIBUTING.md).
+Contributions are welcome! Open an issue or pull request.
 
 ![Contributors](https://contributors-table.vercel.app/image?repo=foomo/claude-code&width=50&columns=15)
 

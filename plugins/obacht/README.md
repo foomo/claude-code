@@ -6,13 +6,20 @@ The plugin is presentation-only: rule evaluation, evidence collection, and remed
 
 ## Prerequisites
 
-The `obacht` CLI must be installed:
+The `obacht` CLI must be installed. Pick one:
 
 ```shell
+# Homebrew
 brew install foomo/tap/obacht
+
+# Go toolchain
 go install github.com/foomo/obacht@latest
+
+# mise (ephemeral, no install)
 mise x github:foomo/obacht -- obacht --format=json scan
 ```
+
+Verify with `obacht --version`.
 
 ## Install
 
