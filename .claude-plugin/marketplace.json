@@ -6,12 +6,16 @@
 	},
 	"plugins": [
 		{
-			"name": "superpowers",
-			"source": "./plugins/superpowers"
+			"name": "skills",
+			"source": "./plugins/skills"
 		},
 		{
 			"name": "obacht",
 			"source": "./plugins/obacht"
+		},
+		{
+			"name": "superpowers",
+			"source": "./plugins/superpowers"
 		}
 	],
 	"allowCrossMarketplaceDependenciesOn": [

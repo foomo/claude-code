@@ -30,6 +30,16 @@ endif
 
 ### Tasks
 
+.PHONY: lint
+## Lint markdown
+lint:
+	@markdownlint-cli2 "**/*.md"
+
+.PHONY: lint.fix
+## Lint markdown
+lint.fix:
+	@markdownlint-cli2 --format --fix "**/*.md"
+
 ### Utils
 
 .PHONY: help

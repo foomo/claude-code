@@ -1,7 +1,7 @@
 {
 	"$schema": "https://www.schemastore.org/claude-code-plugin-manifest.json",
 	"name": "superpowers",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"description": "Superpowers the foomo way",
 	"dependencies": [
 		{
