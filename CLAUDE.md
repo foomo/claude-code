@@ -4,7 +4,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-A Claude Code **marketplace** (`.claude-plugin/marketplace.json`) bundling three plugins. Each plugin is self-contained under `plugins/<name>/` with its own `.claude-plugin/plugin.json`. Distribution is via:
+A Claude Code **marketplace** (`.claude-plugin/marketplace.json`) bundling three plugins. Each plugin is self-contained
+under `plugins/<name>/` with its own `.claude-plugin/plugin.json`. Distribution is via:
 
 ```
 /plugin marketplace add foomo/claude-code
