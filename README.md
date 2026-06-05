@@ -1,3 +1,6 @@
+[![GitHub License](https://img.shields.io/github/license/foomo/claude-code?style=flat-square)](https://github.com/foomo/claude-code/blob/main/LICENSE)
+[![GitHub Stars](https://img.shields.io/github/stars/foomo/claude-code.svg?style=flat-square&logo=github)](https://github.com/foomo/claude-code)
+
 <p align="center">
   <img alt="obacht" src="docs/public/logo.png" width="400" height="400"/>
 </p>

@@ -33,12 +33,12 @@ endif
 .PHONY: lint
 ## Lint markdown
 lint:
-	@markdownlint-cli2 "**/*.md"
+	@rumdl check .
 
 .PHONY: lint.fix
 ## Lint markdown
 lint.fix:
-	@markdownlint-cli2 --format --fix "**/*.md"
+	@rumdl check --fix .
 
 ### Utils
 

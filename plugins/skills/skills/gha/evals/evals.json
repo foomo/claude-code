@@ -1,0 +1,142 @@
+{
+  "skill_name": "gha",
+  "evals": [
+    {
+      "id": 1,
+      "name": "missing-top-level-permissions",
+      "prompt": "Harden the GitHub Actions workflow at fixtures/missing-permissions.yml. Apply the gha skill's enforcements and rewrite in place.",
+      "files": ["fixtures/missing-permissions.yml"],
+      "expected_output": "Workflow gains a top-level `permissions: contents: read` block inserted between `on:` and `jobs:`. The `actions/checkout@v4` ref is SHA-pinned with a `# v4.x.y` trailing comment and a preceding `# https://github.com/actions/checkout/releases` line.",
+      "assertions": [
+        {
+          "name": "top-level permissions block added",
+          "check": "file contains a top-level `permissions:` key with `contents: read`"
+        },
+        {
+          "name": "permissions placed between on: and jobs:",
+          "check": "the `permissions:` block appears after the `on:` block and before the `jobs:` block"
+        },
+        {
+          "name": "checkout action SHA-pinned",
+          "check": "the `uses: actions/checkout@...` line ends in `@<40-hex>` not `@v4`"
+        },
+        {
+          "name": "trailing tag comment present",
+          "check": "the pinned `uses:` line has a `# v4.<...>` trailing comment matching a real release tag"
+        },
+        {
+          "name": "releases-link comment above uses:",
+          "check": "the line immediately above the pinned `uses:` is `# https://github.com/actions/checkout/releases` indented to match"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "overbroad-workflow-write-scope",
+      "prompt": "Harden the GitHub Actions workflow at fixtures/overbroad-workflow-write.yml. Apply the gha skill's enforcements and rewrite in place.",
+      "files": ["fixtures/overbroad-workflow-write.yml"],
+      "expected_output": "Workflow-level `permissions:` tightened to `contents: read`. The `release` job gains its own `permissions:` block declaring BOTH `contents: write` AND `id-token: write` (full replacement per Rule A3) plus `contents: read` is not separately needed because `contents: write` implies read. The `test` job stays without a `permissions:` block (inherits the tightened workflow default).",
+      "assertions": [
+        {
+          "name": "workflow-level permissions narrowed",
+          "check": "top-level `permissions:` no longer contains `contents: write` or `id-token: write`; instead contains `contents: read`"
+        },
+        {
+          "name": "release job has explicit permissions block",
+          "check": "the `release:` job declares its own `permissions:` block"
+        },
+        {
+          "name": "release job permissions restates all needed scopes",
+          "check": "release job's `permissions:` block contains `contents: write` AND `id-token: write` (A3: full replacement, not merge)"
+        },
+        {
+          "name": "test job has no permissions block",
+          "check": "the `test:` job has no `permissions:` block (inherits the tightened workflow default)"
+        },
+        {
+          "name": "both checkout actions SHA-pinned",
+          "check": "every `uses: actions/checkout@...` line ends in a 40-hex SHA, not `@v4`"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "unpinned-uses-bulk-pin",
+      "prompt": "Harden the GitHub Actions workflow at fixtures/unpinned-uses.yml. Apply the gha skill's enforcements and rewrite in place.",
+      "files": ["fixtures/unpinned-uses.yml"],
+      "expected_output": "All three `uses:` refs (`actions/checkout@v4`, `actions/setup-go@v5`, `golangci/golangci-lint-action@v6`) are rewritten with a 40-char SHA + a `# vX.Y.Z` trailing comment + a preceding `# https://github.com/<owner>/<repo>/releases` comment. The `contents: read` top-level permission is preserved unchanged (no edit needed).",
+      "assertions": [
+        {
+          "name": "actions/checkout pinned",
+          "check": "the `actions/checkout` line uses `@<40-hex>` with a `# v4.<...>` comment"
+        },
+        {
+          "name": "actions/setup-go pinned",
+          "check": "the `actions/setup-go` line uses `@<40-hex>` with a `# v5.<...>` comment"
+        },
+        {
+          "name": "golangci-lint-action pinned",
+          "check": "the `golangci/golangci-lint-action` line uses `@<40-hex>` with a `# v6.<...>` comment"
+        },
+        {
+          "name": "releases-link comment for every newly pinned action",
+          "check": "each pinned `uses:` line has a `# https://github.com/<owner>/<repo>/releases` line directly above it at matching indentation"
+        },
+        {
+          "name": "tag comment is a concrete release tag, not floating major",
+          "check": "trailing `# vX` comments are concrete (`# v4.2.0`), not the original floating major (`# v4`)"
+        },
+        {
+          "name": "top-level permissions untouched",
+          "check": "the existing `permissions: contents: read` block is preserved"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "branch-ref-must-not-auto-pin",
+      "prompt": "Harden the GitHub Actions workflow at fixtures/branch-ref.yml. Apply the gha skill's enforcements and rewrite in place.",
+      "files": ["fixtures/branch-ref.yml"],
+      "expected_output": "The `actions/checkout@v4` ref is SHA-pinned with the standard releases-link + trailing tag comment. The `some-org/some-action@main` ref is NOT rewritten — the skill reports the branch ref and asks the user whether to pin to HEAD SHA or a specific tag (Rule B3).",
+      "assertions": [
+        {
+          "name": "branch ref not auto-rewritten",
+          "check": "the `some-org/some-action@main` line is still `@main` (or commented as 'needs user decision'), NOT silently rewritten to a SHA"
+        },
+        {
+          "name": "branch ref flagged in report",
+          "check": "the skill's report or response calls out `some-org/some-action@main` as a branch ref requiring user input"
+        },
+        {
+          "name": "non-branch ref still gets pinned",
+          "check": "the `actions/checkout@v4` line IS rewritten to `@<40-hex> # v4.<...>` with the releases-link comment above"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "drift-comment-fix",
+      "prompt": "Harden the GitHub Actions workflow at fixtures/drift-comment.yml. Apply the gha skill's enforcements and rewrite in place. The SHA `11bd71901bbe5b1630ceea73d27597364c9af683` is actions/checkout's v4.1.1 release, not v4.0.0 — verify and fix any drift.",
+      "files": ["fixtures/drift-comment.yml"],
+      "expected_output": "The SHA is left unchanged. The trailing comment is rewritten from `# v4.0.0` to the actual tag(s) pointing at that SHA (e.g. `# v4.1.1`). The releases-link comment above is preserved unchanged.",
+      "assertions": [
+        {
+          "name": "SHA preserved",
+          "check": "the SHA `11bd71901bbe5b1630ceea73d27597364c9af683` is unchanged"
+        },
+        {
+          "name": "trailing tag comment updated",
+          "check": "the trailing comment is no longer `# v4.0.0`; it matches a real tag pointing at that SHA per `gh api repos/actions/checkout/tags`"
+        },
+        {
+          "name": "releases-link comment preserved",
+          "check": "the `# https://github.com/actions/checkout/releases` line directly above is still present and indented to match"
+        },
+        {
+          "name": "no spurious second comment",
+          "check": "there is exactly one trailing `# <tag>` comment on the `uses:` line (no duplication from the rewrite)"
+        }
+      ]
+    }
+  ]
+}

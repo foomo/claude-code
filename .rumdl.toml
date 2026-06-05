@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/rvben/rumdl/refs/heads/main/rumdl.schema.json
+
+[global]
+cache = false
+# Markdown flavor/dialect
+# Options: standard (default), gfm, commonmark, mkdocs, mdx, pandoc, quarto, obsidian, kramdown, azure_devops, myst
+flavor = "standard"
+# Respect .gitignore files when scanning directories (default: true)
+respect-gitignore = true
+# List of file/directory patterns to exclude from linting
+exclude = [
+	# Common directories to exclude
+	".git",
+	# Specific files or patterns
+	"CODE_OF_CONDUCT.md",
+	"CONTRIBUTING.md",
+	"SECURITY.md",
+	"CHANGELOG.md",
+	"LICENSE.md",
+]
+# Disable rules
+disable = [ "MD033", "MD040", "MD041" ]
+
+[per-file-flavor]
+"README.md" = "gfm"
+".github/**/.md" = "gfm"
+
+[MD013]
+line-length = 120
