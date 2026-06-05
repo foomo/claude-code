@@ -1,0 +1,6 @@
+{
+	"$schema": "https://www.schemastore.org/claude-code-plugin-manifest.json",
+	"name": "skills",
+	"version": "0.1.0",
+	"description": "Common shared skills."
+}

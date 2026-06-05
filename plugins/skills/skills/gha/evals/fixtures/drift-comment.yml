@@ -1,0 +1,13 @@
+name: test
+on: [push]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      # https://github.com/actions/checkout/releases
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.0.0
+      - run: make test
