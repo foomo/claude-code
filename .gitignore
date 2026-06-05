@@ -36,3 +36,6 @@ tmp/
 ## Claude
 !**/.claude-plugin/
 !**/CLAUDE.md
+
+## Markdown
+!.rumdl.toml
