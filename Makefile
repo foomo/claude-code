@@ -40,6 +40,37 @@ lint:
 lint.fix:
 	@rumdl check --fix .
 
+### SkillSpector
+
+SKILLSPECTOR_IMAGE ?= foomo/skillspector:latest
+SKILLSPECTOR_REF   ?= main
+TARGET             ?= ./plugins
+
+.PHONY: skillspector.build
+## Build SkillSpector docker image (override SKILLSPECTOR_REF for a tag/branch)
+skillspector.build:
+	@docker build \
+		--build-arg SKILLSPECTOR_REF=$(SKILLSPECTOR_REF) \
+		-t $(SKILLSPECTOR_IMAGE) \
+		-f tools/skillspector.Dockerfile .
+
+.PHONY: skillspector.scan
+## Scan TARGET (default: ./plugins) with SkillSpector. Pass ARGS=... for extra flags.
+skillspector.scan:
+	@docker run --rm -t \
+		-v "$(CURDIR):/scan" \
+		-w /scan \
+		$(SKILLSPECTOR_IMAGE) scan $(TARGET) --no-llm $(ARGS)
+
+.PHONY: skillspector.shell
+## Open a shell in the SkillSpector image (cwd mounted at /scan)
+skillspector.shell:
+	@docker run --rm -it \
+		--entrypoint /bin/bash \
+		-v "$(CURDIR):/scan" \
+		-w /scan \
+		$(SKILLSPECTOR_IMAGE)
+
 ### Utils
 
 .PHONY: help
